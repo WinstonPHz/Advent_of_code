@@ -49,7 +49,7 @@ def eval(expression):
         if i == 0:
             total = int(val)
         if val == "*":
-           total *= int(evaluates[i+1])
+            total *= int(evaluates[i+1])
     return total
 
 
@@ -57,5 +57,3 @@ tots = []
 for puz in puzzle:
     tots.append(nested(puz))
 print("Answer 1:", sum(tots))
-
-
