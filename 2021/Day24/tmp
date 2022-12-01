@@ -1,0 +1,252 @@
+inp w0
+mul x 0  # x=0
+add x z  # x=0
+mod x 26 # x=0
+div z 1  # z=0
+add x 13 # x=13
+eql x w  # x=0
+eql x 0  # x=1
+mul y 0  # y=0
+add y 25 # y=25
+mul y x  # y=0
+add y 1  # y=1
+mul z y  # z=0
+mul y 0  # y=0
+add y w  # y=w
+add y 3  # y=w+3
+mul y x  # y=w+3
+add z y  # z=w+3
+inp w1
+mul x 0  # x=0
+add x z  # x=w+3
+mod x 26 # x=w+3
+div z 1  # z=w0+3
+add x 11 # x=w0+14
+eql x w  # x=0
+eql x 0  # x=1
+mul y 0  # y=0
+add y 25 # y=25
+mul y x  # y=25
+add y 1  # y=26
+mul z y  # z=(w0+3)*26
+mul y 0  # y=0
+add y w  # y=w
+add y 12 # y=w+12
+mul y x  # y=w+12
+add z y  # z=(w0+3)*26 + w1+12
+inp w2
+mul x 0  # x=0
+add x z  # x=(w0+3)*26 + w1+12
+mod x 26 # x=((w0+3)*26 + w1+12)%26
+div z 1  # z=(w0+3)*26 + w1+12
+add x 15 # x=!+15
+eql x w  # x=0
+eql x 0  # x=1
+mul y 0  # y=0
+add y 25 # y=25
+mul y x  # y=25
+add y 1  # Y=26
+mul z y  # z=((w0+3)*26 + w1+12)*26
+mul y 0  # y=0
+add y w  # y=w2
+add y 9  # y=w2+9
+mul y x  # y=w2+9
+add z y  # z=((w0+3)*26 + w1+12)*26 + w2 + 9
+inp w3
+mul x 0  # x=0
+add x z  # x=(26^2w0 + 26w1 + w2 + 2349)
+mod x 26 # x=w2+9
+div z 26 # z=(26^2w0 + 26w1 + w2 + 2349)/26 z=26w0 + w1 + w2/26 + 90
+add x -6 # x=w2+3
+eql x w  # x=0
+eql x 0  # x=1
+mul y 0  # y=0
+add y 25 # y=25
+mul y x  # y=25
+add y 1  # y=26
+mul z y  # z=(26^2w0 + 26w1 + w2 + 2340)
+mul y 0  # y=0
+add y w  # y=w3
+add y 12 # y=w3+12
+mul y x  # y=w3+12
+add z y  # z=26^2w0 + 26w1 + w2 + w3 + 2352
+inp w4
+mul x 0  # x=0
+add x z  # x=26^2w0 + 26w1 + w2 + w3 + 2352
+mod x 26 # x=w2+w3+12
+div z 1  # z=26^2w0 + 26w1 + w2 + w3 + 2352
+add x 15 # x=w2+w3+27
+eql x w  # x=0
+eql x 0  # x=1
+mul y 0  # y=0
+add y 25 # y=25
+mul y x  # y=25
+add y 1  # y=26
+mul z y  # z=26^3w0 + 26^2w1 + 26w2 + 26w3 + 61152
+mul y 0  # y=0
+add y w  # y=w4
+add y 2  # y=w4 + 2
+mul y x  # y=w4+2
+add z y  # z=26^3w0 + 26^2w1 + 26w2 + 26w3 + w4 + 61154
+inp w5
+mul x 0  # x=0
+add x z  # x= 26^3w0 + 26^2w1 + 26w2 + 26w3 + w4 + 61154
+mod x 26 # x= w4+2
+div z 26 # z= 26^2w0 + 26w1 + w2 + w3 + w4/26 + 2352
+add x -8 # x= w4-6  w4=6
+eql x w  # x=1
+eql x 0  # x=0
+mul y 0  # y=0
+add y 25 # y=25
+mul y x  # y=0
+add y 1  # y=1
+mul z y  # z=26^2w0 + 26w1 + w2 + w3 + w4/26 + 2352
+mul y 0  # y=0
+add y w  # y=w5
+add y 1  # y=w5+1
+mul y x  # y=0
+add z y  # z=26^2w0 + 26w1 + w2 + w3 + w4/26 + 2352
+inp w6
+mul x 0  # x=0
+add x z  # x=26^2w0 + 26w1 + w2 + w3 + w4/26 + 2352
+mod x 26 # x= w2+w3 +12
+div z 26 # z=26w0 + w1
+add x -4 # x=
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 10
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 6
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -11
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x 0
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 11
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 10
+mul y x
+add z y
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -7
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
