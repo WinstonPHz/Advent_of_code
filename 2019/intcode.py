@@ -1,14 +1,27 @@
 debug = 0
 class computer():
-    def __init__(self, input_code, user_mode = 0):
+    def __init__(self, file_name = ""):
+        code = []
+
+        with open(file_name) as file:
+            for line in file:
+                if line == "\n":
+                    break
+                components = line.split(",")
+                for value in components:
+                    code.append(int(value))
+        self.input = code
         self.itr = 0
-        self.input = input_code
+
         self.relative_base = 0
         self.address = {}
-        self.um = user_mode
-        for i, value in enumerate(input_code):
+
+        for i, value in enumerate(self.input):
             self.address[i] = value
 
+    def change_address(self, addr, change_to):
+        self.input[addr] = change_to
+        self.address[addr] = change_to
     def run_computer(self, into = 0):
         # Example computer([1,255], 0)
         # test = 3,9,8,9,10,9,4,9,99,-1,8

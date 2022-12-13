@@ -1,26 +1,14 @@
-import dis
-
 from intcode import computer
 import copy
 import os
 
-def get_code(filename):
-    code = []
-    with open(filename) as file:
-        for line in file:
-            if line == "\n":
-                break
-            components = line.split(",")
-            for value in components:
-                code.append(int(value))
-    return code
+
 
 def day2():
     ## Day 02 Testing
-    code = get_code("d02in.txt")
-    code[1] = 12
-    code[2] = 2
-    c1 = computer(code)
+    c1 = computer("d02in.txt")
+    c1.change_address(1,12)
+    c1.change_address(2,2)
     while True:
         out = c1.run_computer(1)
         if out == 99:
@@ -29,8 +17,7 @@ def day2():
     print(">>", c1.address[0])
 
 def day5():
-    code = get_code("d05in.txt")
-    c2 = computer(code)
+    c2 = computer("d05in.txt")
     out = c2.run_computer(1)
     print("Answer for Day 5 Part 1: ")
     print("0 0 0 0 0 0 0 0 0 7259358 99\n>> ", end="")
@@ -40,15 +27,14 @@ def day5():
         print(out, end=" ")
     print()
     print("Answer for Day 5 Part 2: ")
-    c2 = computer(code)
+    c2 = computer("d05in.txt")
     out = c2.run_computer(5)
     print("Should be 11826654")
     print(">>", out)
 
 
 def day9():
-    code = get_code("d09in.txt")
-    c1 = computer(code)
+    c1 = computer("d09in.txt")
     out = c1.run_computer(1)
     print("Answer for Day 9 Part 1: ")
     print("2171728567 99\n>> ", end="")
@@ -57,10 +43,10 @@ def day9():
         out = c1.run_computer()
         print(out, end=" ")
     print()
-    c2 = computer(code)
+    c2 = computer("d09in.txt")
     out = c2.run_computer(2)
     print("Answer for Day 9 Part 2: ")
-    print(f"49815\n>>{out}", end = "")
+    print(f"49815\n>>{out}")
 
 class display():
     def __init__(self, initial_state):
@@ -116,9 +102,11 @@ class display():
 
 
 
+day2()
+day5()
+day9()
 
-code = get_code("d13in.txt")
-c1 = computer(code)
+c1 = computer("d13in.txt")
 tile_array = []
 out = c1.run_computer()
 tiles = []
@@ -135,8 +123,9 @@ for tile in tile_array:
 
 print("Ans1:", tile_count)
 
-code[0] = 2
-c2 = computer(code)
+
+c2 = computer("d13in.txt")
+c2.change_address(0, 2)
 disp = display(tile_array)
 j = 0
 tile_array = []
@@ -146,12 +135,11 @@ while True:
         out = c2.run_computer(disp.user_input)
         tiles.append(out)
     if [99,99,99] == tiles:
-        disp.show_display()
+        print("Ans2:", disp.score)
         break
     disp.set_display([tiles])
     tiles = []
     j += 1
-    if j % 60 == 0:
-        disp.show_display()
+
 
 
