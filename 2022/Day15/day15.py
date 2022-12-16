@@ -79,6 +79,8 @@ def check_all_row(row_id):
             y = row_id
             x = zone_bytes[i]+1
             freq = x*4000000 + y
+            print(zone_bytes)
+            print(compressed)
             print([x,y])
             print("Answer 2:", freq)
             break
