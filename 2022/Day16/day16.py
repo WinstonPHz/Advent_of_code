@@ -62,13 +62,13 @@ class tunnel_system():
             # We dont want to come back here
             del pos_min[cur_pos]
 
-    def calc_next_open(self, cp, dne, ):
-        min_dist_me = self.propigate(self.current_pos_me)
+    def calc_next_open(self):
+        min_dist = self.propigate(self.current_pos_me)
         best_gain_me = 0
         next_move_me = ""
         flow_ratios = {}
         best_dist_me = []
-        for key, path in min_dist_me.items():
+        for key, path in min_dist.items():
             # Get the best one to go to, then do that one
             if self.help:
                 if key == self.cur_best_open_e:
