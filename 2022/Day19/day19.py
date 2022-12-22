@@ -1,18 +1,19 @@
 import re
 import math
 import copy
+import json
 class blueprint():
     def __init__(self, line):
         self.id = 0
-        self.need = {0: 0, 1: 0, 2: 0, 3: 0}
+        self.need = [0, 0, 0, 0]
         # 0 = ore
         # 1 = clay
         # 2 = obsidian
         # 3 = Geode
-        self.production = {0: 1, 1: 0, 2: 0, 3: 0}
-        self.have = {0: 0, 1: 0, 2: 0, 3: 0}
+        self.production = [1, 0, 0, 0]
+        self.have = [0, 0, 0, 0]
         self.cost = {}
-        self.weight = {0: 1, 1: 1, 2: 1, 3:1}
+        self.weight = [1, 1, 1, 1]
         components = line.split(". ")
         for i, comp in enumerate(components):
             if i == 0:
@@ -38,13 +39,14 @@ class blueprint():
         for material, cost in self.cost.items():
             # Set up the raw cost of each as a need
             for item, quatn in cost.items():
-                if self.need[item] < quatn:
-                    self.need[item] = quatn
+                #if self.need[item] < quatn:
+                self.need[item] += quatn
         return
 
+
     def calculate_weight(self):
-        for material, prod in self.production.items():
-            self.weight[material] = self.need[material] - prod
+        for material, prod in enumerate(self.production):
+            self.weight[material] = self.need[material] - prod - self.have[material]
         self.weight[3] = 100
         return
 
@@ -68,9 +70,46 @@ class blueprint():
                     cant_build.append(item)
         return cant_build
 
+    def delta_build(self, bot1, bot2):
+        reduced_time = 25
+        test_have = copy.deepcopy(self.have)
+        test_prod = copy.deepcopy(self.production)
+        cur_build_time = []
+        # get the max of the current cost - what we have / production
+        for item, quant in self.cost[bot2].items():
+            # The costs of the next time
+            if self.production[item] == 0:
+                # Cant build the next thing at all
+                break
+            cur_build_time.append((quant - self.have[item]) / self.production[item])
+        time_to_build_bot2 = math.ceil(max(cur_build_time))
+
+        # Now time to get the future build time if we build this thing
+        for item, quant in self.cost[bot1].items():
+            test_have[item] -= quant
+        test_prod[bot1] += 1
+        nxt_build_time = []
+        # get the max of the current cost - what we have / production
+        for item, quant in self.cost[bot2].items():
+            # The costs of the next time
+            if test_prod[item] == 0:
+                # Cant build the next thing at all
+                break
+            nxt_build_time.append((quant - test_have[item]) / test_prod[item])
+        time_to_build_bot1_and_bot2 = math.ceil(max(nxt_build_time))
+        print(f"If I build a {bot1} Next build time for {bot2} is {time_to_build_bot1_and_bot2} but current build time is {time_to_build_bot2}")
+        if time_to_build_bot1_and_bot2 < time_to_build_bot2 and self.weight[bot1] > 0:
+            print("Adding to build list", bot1, time_to_build_bot1_and_bot2)
+            reduced_time = time_to_build_bot1_and_bot2
+
+        if reduced_time != 25:
+            return reduced_time
+        else:
+            return 25
+
     def next_build(self):
-        can_build = self.can_build()  # Have the materials
-        cant_build = self.cant_build()# Not producing the materials needed
+        can_build = self.can_build()    # Have the materials
+        cant_build = self.cant_build()  # Not producing the materials needed
         if can_build == []:
             return -1
         if 3 in can_build:
@@ -78,7 +117,7 @@ class blueprint():
         # Which building do we actually really want based on the weight?
         self.calculate_weight()
         build_order_weight = {}
-        for material, weight in self.weight.items():
+        for material, weight in enumerate(self.weight):
             if material not in cant_build:
                 build_order_weight[weight] = material
         order = list(build_order_weight.keys())
@@ -88,47 +127,27 @@ class blueprint():
         if to_build in can_build:
             return to_build
         # we can build some things, but should we, will it slow down what we want or speed it up?
-        reduced_time = [25,25,25,25]
-        for test_build in can_build:
-            cur_build_time = []
-            # get the max of the current cost - what we have / production
-            for item, quant in self.cost[to_build].items():
-                # The costs of the next time
-                if self.production[item] == 0:
-                    # Cant build the next thing at all
-                    break
-                cur_build_time.append((quant-self.have[item])/self.production[item])
-            time_to_build_current = math.ceil(max(cur_build_time))
-            # Now time to get the future build time if we build this thing
-            test_have = copy.deepcopy(self.have)
-            test_prod = copy.deepcopy(self.production)
-            for item, quant in self.cost[test_build].items():
-                test_have[item] -= quant
-            test_prod[test_build] += 1
-
-            nxt_build_time = []
-            # get the max of the current cost - what we have / production
-            for item, quant in self.cost[to_build].items():
-                # The costs of the next time
-                if test_prod[item] == 0:
-                    # Cant build the next thing at all
-                    break
-                nxt_build_time.append((quant - test_have[item]) / test_prod[item])
-            time_to_build_future = math.ceil(max(nxt_build_time))
-            print(f"if I build a {test_build} Next build time for {to_build} is {time_to_build_future} but current build time is {time_to_build_current}")
-            if time_to_build_future <= time_to_build_current and self.weight[test_build] > 0:
-                print("Adding to build list", test_build, time_to_build_future)
-                reduced_time[test_build] = time_to_build_future
-        if min(reduced_time) != 25:
-            return reduced_time.index(min(reduced_time))
-        return -1
-
+        j=0
+        while True:
+            reduced_times = [25]*4
+            for i in range(3):
+                # Test each bot, see if any bot reduces the time of to build
+                reduced_times[i] = self.delta_build(i,to_build-j)
+            print("Reducded times:", reduced_times, "for", to_build-j)
+            if min(reduced_times) == 25:
+                # Nothing will speed up this production
+                return -1
+            if reduced_times.index(min(reduced_times)) in can_build:
+                return reduced_times.index(min(reduced_times))
+            else:
+                print("we want to build a ", reduced_times.index(min(reduced_times)), "but cant", self.have)
+            j += 1
 
     def inc_time(self):
         self.minute += 1
         # Produce this many products
-        for key in self.production:
-            self.have[key] += self.production[key]
+        for material, number in enumerate(self.production):
+            self.have[material] += number
 
     def build_robot(self, robot_id):
         cost_to_build = self.cost[robot_id]
@@ -160,5 +179,4 @@ print("=========================================================================
 bp_list[1].run_simulation()
 for bp in bp_list:
     print(bp.have, bp.production)
-
 

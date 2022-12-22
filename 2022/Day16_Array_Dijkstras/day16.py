@@ -2,7 +2,7 @@ class tunnel_system():
     def __init__(self, extra_person = False):
         self.valves = {}
         self.flow_rates = {}
-        with open("input2.txt", "r") as file:
+        with open("input.txt", "r") as file:
             for line in file:
                 line = line.strip("\n")
                 components = line.split(", ")
@@ -147,7 +147,7 @@ class tunnel_system():
         if self.help:
             print("Answer 2:", self.magmaflowed)
         else:
-            print("answer 1:", self.magmaflowed)
+            print("Answer 1:", self.magmaflowed)
 
 ts = tunnel_system()
 ts.run_arround()
