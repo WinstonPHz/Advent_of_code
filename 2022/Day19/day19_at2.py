@@ -75,6 +75,7 @@ class blueprint():
         stored = copy.deepcopy(state[5:])
         print(minute, production, stored)
         max_geo = 0
+        can_build_list = []
         for robot, requirements in self.cost.items():
             if production[robot] >= self.need[robot]:
                 # Don't waste time if we have more production per min and needed
@@ -86,25 +87,25 @@ class blueprint():
                     can_build = False
                     break
             if can_build:
-                print(f"Can build a {robot}")
-                time_taken = self.time_to_build(robot, production, stored)
-                print(f"It will take {time_taken}")
-                new_min = minute + time_taken
-                if new_min >= self.min_max:
-                    new_prod, new_stored = self.calc_new_storage(self.min_max - minute, production, stored)
-                    self.saved_states[str([new_min] + new_prod + new_stored)] = new_stored[3]
-                    self.max_geodes.append(new_stored[3])
-                    print("Got to a max min!")
-                    continue
-                new_prod, new_stored = self.calc_new_storage(time_taken, production, stored, robot)
-                max_geo += self.search(str([new_min] + new_prod + new_stored))
+                can_build_list.append(robot)
+
+        print(f"Can build these: {can_build_list}")
+        can_build_list.sort()
+        for robot in can_build_list[::-1]:
+            time_taken = self.time_to_build(robot, production, stored)
+            print(f"It will take {time_taken}")
+            new_min = minute + time_taken
+            if new_min >= self.min_max:
+                new_prod, new_stored = self.calc_new_storage(self.min_max - minute, production, stored)
+                self.saved_states[str([new_min] + new_prod + new_stored)] = new_stored[3]
+                self.max_geodes.append(new_stored[3])
+                print("Got to a max min!")
+                continue
+        new_prod, new_stored = self.calc_new_storage(time_taken, production, stored, robot)
+        max_geo += self.search(str([new_min] + new_prod + new_stored))
         self.saved_states[str(state)] = max_geo
         return max_geo
 
-
-
-
-            # Attempt to build this robot
 
 
     def run(self):
@@ -119,6 +120,6 @@ with open("input.txt", "r") as file:
         bp_list.append(blueprint(line))
 bp_list[0].run()
 print("=========================================================================================================")
-bp_list[1].run()
+#bp_list[1].run()
 
 
