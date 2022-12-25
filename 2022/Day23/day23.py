@@ -135,4 +135,3 @@ class elf_map():
 
 ef = elf_map()
 ef.rum_sim()
-# 983 is too low

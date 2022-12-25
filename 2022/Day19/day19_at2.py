@@ -44,6 +44,7 @@ class blueprint():
             for item, quatn in cost.items():
                 if self.need[item] < quatn:
                     self.need[item] += quatn
+        self.need[3] = 100
         return
 
     def time_to_build(self, robot, production, stored):
@@ -73,7 +74,9 @@ class blueprint():
         minute = state[0]
         production = copy.deepcopy(state[1:5])
         stored = copy.deepcopy(state[5:])
-        print(minute, production, stored)
+        if minute >= self.min_max:
+            return stored[3]
+        print("state:", minute, production, stored)
         max_geo = 0
         can_build_list = []
         for robot, requirements in self.cost.items():
@@ -93,17 +96,17 @@ class blueprint():
         can_build_list.sort()
         for robot in can_build_list[::-1]:
             time_taken = self.time_to_build(robot, production, stored)
-            print(f"It will take {time_taken}")
             new_min = minute + time_taken
+            print(f"It will take {time_taken} to build robot {robot} new time {new_min} {minute}")
             if new_min >= self.min_max:
                 new_prod, new_stored = self.calc_new_storage(self.min_max - minute, production, stored)
                 self.saved_states[str([new_min] + new_prod + new_stored)] = new_stored[3]
                 self.max_geodes.append(new_stored[3])
-                print("Got to a max min!")
+                print("Got to a max minute saving state tyring different bot!")
                 continue
-        new_prod, new_stored = self.calc_new_storage(time_taken, production, stored, robot)
-        max_geo += self.search(str([new_min] + new_prod + new_stored))
-        self.saved_states[str(state)] = max_geo
+            new_prod, new_stored = self.calc_new_storage(time_taken, production, stored, robot)
+            max_geo += self.search(str([new_min] + new_prod + new_stored))
+            self.saved_states[str(state)] = max_geo
         return max_geo
 
 
