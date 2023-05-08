@@ -1,4 +1,5 @@
 import math
+import copy
 class Geodecracker:
     def __init__(self, blueprint, duration):
         self.bp_id = int(blueprint.split(":")[0].split("Blueprint ")[1])
@@ -7,9 +8,9 @@ class Geodecracker:
         self.costs = self.decodebp(blueprint)
         self.maximum_cost = [0,0,0,0]
         self.max_cost()
-        print(self.maximum_cost)
+        #print(self.maximum_cost)
         self.duration = duration
-        print(self.costs)
+        #print(self.costs)
         self.states = []
         self.current_max = 0
         self.test()
@@ -53,7 +54,7 @@ class Geodecracker:
         return ttb_robots
 
     def build_next_robot(self, robot, build_time, state):
-        curent_time, production, stored = state
+        curent_time, production, stored = copy.deepcopy(state)
         # Go to the next node point
         delta_time = 1 + build_time
         curent_time += delta_time
@@ -62,17 +63,20 @@ class Geodecracker:
         for material, quant in self.costs[robot].items(): # Build the robot
             stored[material] -= quant
         production[robot] += 1
-        return (curent_time, production, stored)
+        return (copy.copy(curent_time), copy.copy(production), copy.copy(stored))
 
     def node_hop(self, state):
-        start_state = state
-        next_nodes_at = self.time_to_build(start_state)
+        start_state = copy.deepcopy(state)
+        next_nodes_at = self.time_to_build(state)
         for robot, time in next_nodes_at.items():
             if time < 0: # skip the ones we can not build
                 continue
-            if state[1][robot] >= self.maximum_cost[robot]:
-                continue
-            next_state = self.build_next_robot(robot, time, start_state)
+            if robot != 3:
+                if start_state[1][robot] >= self.maximum_cost[robot]:
+                    # skip the ones that we don't need
+                    continue
+            #print(start_state, "Trying", robot, next_nodes_at)
+            next_state = copy.deepcopy(self.build_next_robot(robot, time, start_state))
             if not (self.max_check(next_state) >= self.current_max):
                 # if the next state can not increase our current max, don't bother
                 continue
@@ -87,8 +91,6 @@ class Geodecracker:
         if curent_time == self.duration:
             if stored[3] > self.current_max:
                 self.current_max = stored[3]
-                print(self.current_max)
-                quit()
         elif curent_time > self.duration:
             print("I think you should never see this message")
             return
@@ -97,8 +99,6 @@ class Geodecracker:
                 fake_stored += production[3]
             if fake_stored > self.current_max:
                 self.current_max = fake_stored
-                print(self.current_max)
-                quit()
 
 
     def max_check(self, state):
@@ -124,7 +124,9 @@ class Geodecracker:
 
 
 with open("input.txt") as file:
+    total = 0
     for line in file:
         a = Geodecracker(line, 24)
-        print("Checked it?", a.current_max)
-        quit()
+        total += a.bp_id*a.current_max
+        print("Blueprint", a.bp_id, "totaling in", a.current_max, "Geodes")
+    print("Answer 1:", total)
