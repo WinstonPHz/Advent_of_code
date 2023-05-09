@@ -95,7 +95,7 @@ class Geodecracker:
             print("I think you should never see this message")
             return
         elif curent_time < self.duration:
-            for i in range(curent_time, self.duration+1):
+            for i in range(curent_time, self.duration):
                 fake_stored += production[3]
             if fake_stored > self.current_max:
                 self.current_max = fake_stored
@@ -105,7 +105,7 @@ class Geodecracker:
         curent_time, production, stored = state
         fake_store = stored[3]
         fake_prod = production[3]
-        for i in range(curent_time, self.duration+1):
+        for i in range(curent_time, self.duration):
             # If we make a geode robot every turn from now on how many will we get?
             fake_store += fake_prod
             fake_prod += 1
@@ -118,7 +118,7 @@ class Geodecracker:
         stored = [0, 0, 0, 0]
         curent_time = 0
         state = (curent_time, production, stored)
-        state = self.node_hop(state)
+        self.final_state = self.node_hop(state)
 
 
 
@@ -130,3 +130,15 @@ with open("input.txt") as file:
         total += a.bp_id*a.current_max
         print("Blueprint", a.bp_id, "totaling in", a.current_max, "Geodes")
     print("Answer 1:", total)
+
+with open("input.txt") as file:
+    total = 1
+    for line in file:
+        if "Blueprint 4" in line:
+            print("Answer 2:", total)
+            break
+        a = Geodecracker(line, 32)
+        total *= a.current_max
+        print("Blueprint", a.bp_id, "totaling in", a.current_max, "Geodes")
+
+#1190 is low
