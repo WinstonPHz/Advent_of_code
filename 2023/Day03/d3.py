@@ -1,11 +1,8 @@
 puz_string = []
-
-
 with open("input.txt", "r") as file:
   for line in file:
     line = line.strip('\n')
     puz_string.append(line)
-
 
 def parse_input(puz):
     grid = {}
@@ -18,7 +15,7 @@ def parse_input(puz):
 class part1():
     def __init__(self, matrix):
         self.grid = matrix
-        self.sum_part_number = 0
+        self.part1_ans = 0
         self.part2_ans = 0
         self.number = "0,1,2,3,4,5,6,7,8,9".split(",")
 
@@ -46,7 +43,7 @@ class part1():
 
     def look_around(self, x, y, char):
         test_tables = [[-1, -1], [-1, 0], [-1, 1],
-                       [0, -1],           [0, 1],
+                       [0, -1],  [0,0],   [0, 1],
                        [1, -1], [1, 0],   [1, 1]]
         found = []
         for dx, dy in test_tables:
@@ -58,7 +55,7 @@ class part1():
                 continue
             if self.grid[ny][nx] in self.number:
                 found.append(self.count_number(nx, ny))
-        self.sum_part_number += sum(found)
+        self.part1_ans += sum(found)
         if char == "*":
             if len(found) == 2:
                 self.part2_ans += found[0]*found[1]
@@ -73,12 +70,5 @@ class part1():
 
 a = part1(parse_input(puz_string))
 a.scan_grid()
-print("Answer 1 :", a.sum_part_number)
+print("Answer 1 :", a.part1_ans)
 print("Answer 2 :", a.part2_ans)
-
-
-
-
-
-
-
