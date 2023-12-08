@@ -35,7 +35,7 @@ class blizard():
         self.goal = [i-1,j]
         self.Started = False
         self.best_goal = 0
-        self.repeat = 700 # LCM of the lengths 700 for input
+        self.repeat = 700 # Day08_LCM of the lengths 700 for input
 
     def blizard_move(self, step, x, y):
         if y < 0 or x < 0:
