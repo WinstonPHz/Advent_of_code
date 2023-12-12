@@ -69,18 +69,16 @@ class part1():
 
     def part2(self, line, requirement):
         self.part_2_count = 0
-        line = line + "?" + line
-        requirement = requirement*2
-        self.go_deeper_2(line, requirement)
+        line_1 = line + "?"
+        line_2 = "?" + line
+        requirement = requirement
+        self.go_deeper_2(line_1, requirement)
+        self.go_deeper_2(line_2, requirement)
+        print(self.part_1_count, self.part_2_count, line)
         if self.part_1_count == 1 and line[-1] == "#":
             self.ans_2 += 1
         else:
-            self.ans_2 += int((self.part_1_count*(self.part_2_count/self.part_1_count)**4))
-
-
-
-
-
+            self.ans_2 += int((self.part_1_count*(self.part_2_count-self.part_1_count)**4))
 
 
 obj = part1()
@@ -93,3 +91,4 @@ with open("input.txt", "r") as file:
 print("Answer 1 :", obj.ans_1)
 print("Answer 2 :", obj.ans_2)
 
+# LOW: 1231766521885 1231766523105
