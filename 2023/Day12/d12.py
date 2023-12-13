@@ -1,10 +1,11 @@
 import math
 import copy
+from functools import cache
+
+
 class part1():
     def __init__(self):
-        self.part_1_count = 0
         self.ans_1 = 0
-        self.part_2_count = 0
         self.ans_2 = 0
 
     def add_line(self, line):
@@ -13,75 +14,30 @@ class part1():
         order, arangements_string = line.split(" ")
         for num in arangements_string.split(","):
             arangments.append(int(num))
-        self.go_deeper(order, arangments)
-        self.ans_1 += self.part_1_count
-        self.part2(order, arangments)
+        self.ans_1 += self.go_deeper(order, tuple(arangments))
+        p2_string = "?".join([order]*5)
+        p2_arangments = arangments*5
+        self.ans_2 += self.go_deeper(p2_string, tuple(p2_arangments))
 
-    def go_deeper(self, line, requirement):
-        if "?" not in line:
-            if self.partial_check(line, requirement):
-                self.part_1_count += 1
-            return
-        dot_line = line.replace("?", ".", 1)
-        self.go_deeper(dot_line, requirement)
-        hash_line = line.replace("?", "#", 1)
-        self.go_deeper(hash_line, requirement)
-
-    def partial_check(self, line, requirement):
-        got_one = False
-        count_a = 0
-        count_b = 0
-        for char in line:
-            if got_one:
-                if char == ".":
-                    got_one = False
-                    if count_b >= len(requirement):
-                        return False
-                    if count_a != requirement[count_b]:
-                        return False
-                    count_a = 0
-                    count_b += 1
-                else:
-                    count_a += 1
-            else:
-                if char == "#":
-                    got_one = True
-                    count_a += 1
-        if char == "#":
-            if count_b >= len(requirement):
-                return False
-            if count_a != requirement[count_b]:
-                return False
-            count_b += 1
-        if count_b < len(requirement):
-            return False
-        return True
-
-    def go_deeper_2(self, line, requirement):
-        if "?" not in line:
-            if self.partial_check(line, requirement):
-                self.part_2_count += 1
-            return
-        dot_line = line.replace("?", ".", 1)
-        self.go_deeper_2(dot_line, requirement)
-        hash_line = line.replace("?", "#", 1)
-        self.go_deeper_2(hash_line, requirement)
-
-    def part2(self, line, requirement):
-        self.part_2_count = 0
-        line = line + "?" + line
-        requirement = requirement*2
-        self.go_deeper_2(line, requirement)
-        if self.part_1_count == 1 and line[-1] == "#":
-            self.ans_2 += 1
-        else:
-            self.ans_2 += int((self.part_1_count*(self.part_2_count/self.part_1_count)**4))
-
-
-
-
-
-
+    @cache
+    def go_deeper(self, line, requirement, result = 0):
+        if not requirement:
+            # Add 1 if its a good line, no req lef and no # left is a good line
+            return "#" not in line
+        req, requirement = requirement[0], requirement[1:]
+        # Increment over all possabilities for this requirement
+        for i in range(len(line) - sum(requirement) - len(requirement) - req + 1):
+            if "#" in line[:i]:
+                # If there is a gear before this it is not an arragment
+                break
+            next_pos = i + req
+            if not next_pos <= len(line):
+                return result
+            if "." in line[i:next_pos]:
+                continue
+            if line[next_pos:next_pos+1] != "#":
+                result += self.go_deeper(line[next_pos+1:], requirement)
+        return result
 
 obj = part1()
 with open("input.txt", "r") as file:
@@ -89,7 +45,5 @@ with open("input.txt", "r") as file:
         line = line.replace("\n", "")
         obj.add_line(line)
 
-
 print("Answer 1 :", obj.ans_1)
 print("Answer 2 :", obj.ans_2)
-
