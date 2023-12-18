@@ -25,7 +25,6 @@ class tunnel_system():
             self.nex_move_e = ""
             self.min_left = 26
 
-
     def find_min(self, pos_list):
         cur_low = 500
         for key, dist in pos_list.items():
