@@ -5,7 +5,6 @@ class d17():
         self.map = hash_map
         self.max_x = max_x
         self.max_y = max_y
-        self.best_goal = max_x*10+max_y*10
         self.goal = [max_x, max_y]
         self.max_move = 3
         #self.goal = [0,0]
