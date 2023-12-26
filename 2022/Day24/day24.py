@@ -1,4 +1,4 @@
-`import copy
+import copy
 import heapq
 
 class blizard():
@@ -115,5 +115,3 @@ class blizard():
 
 bz = blizard()
 bz.part2()
-
-`
