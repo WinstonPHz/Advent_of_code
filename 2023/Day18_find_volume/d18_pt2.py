@@ -19,22 +19,6 @@ class d18():
         self.instructions_1.append([direction, amount])
 
 
-    def crosses(self, point, grid):
-        x, y1, = point
-        y2 = y1 + 1
-        count = 0
-        i = x
-        y_max = max(grid.keys())
-        while True:
-            if y2 > y_max:
-                return count
-            check_array = [str(grid[y1][i]), str(grid[y2][i])]
-            if check_array == ["1", "1"]:
-                count += 1
-            i -= 1
-            if i < 0:
-                return count
-
     def print_map(self, to_print):
         for j, row in to_print.items():
             for char in row:
